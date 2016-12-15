@@ -1,4 +1,4 @@
-package com.aleksandrbogomolov.streams
+package com.aleksandrbogomolov.stream
 
 import com.aleksandrbogomolov.configuration.SparkConfiguration
 import org.apache.spark.streaming.dstream.DStream
