@@ -1,0 +1,1 @@
+Simple module app with Spark Streaming, Twitter, Maven.
