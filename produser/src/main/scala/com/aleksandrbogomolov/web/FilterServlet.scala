@@ -10,11 +10,14 @@ import com.aleksandrbogomolov.stream.FilterStream
 class FilterServlet extends HttpServlet {
 
   override def doGet(req: HttpServletRequest, resp: HttpServletResponse): Unit = {
-//    val filters: Array[String] = req.getParameter("filters").split(" ")
+    //    filters = req.getParameter("filters").split(" ")
     val filters: Array[String] = Array("#scala", "#java", "#groovy", "#kotlin")
-    val configuration: SparkConfiguration = new SparkConfiguration
-    val stream = new FilterStream(configuration, filters)
-    stream.configuration.streamingContext.start()
-    stream.configuration.streamingContext.awaitTermination()
+    req.getParameter("event") match {
+      case "start" =>
+        resp.getWriter.println("App work")
+        FilterStream.configuration = new SparkConfiguration
+        FilterStream.run(filters)
+      case "stop" => FilterStream.stop()
+    }
   }
 }
