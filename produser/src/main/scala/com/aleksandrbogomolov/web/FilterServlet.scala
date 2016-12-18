@@ -16,8 +16,8 @@ class FilterServlet extends HttpServlet {
       case "start" =>
         resp.getWriter.println("App work")
         FilterStream.configuration = new SparkConfiguration
-        FilterStream.run(filters)
-      case "stop" => FilterStream.stop()
+        FilterStream.startStream(filters)
+      case "stop" => FilterStream.stopStream()
     }
   }
 }
