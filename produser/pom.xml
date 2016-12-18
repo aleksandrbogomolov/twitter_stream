@@ -54,7 +54,7 @@
                 <version>2.4</version>
                 <configuration>
                     <warSourceDirectory>src/main/resources/webapp</warSourceDirectory>
-                    <warName>TwitterStream</warName>
+                    <warName>twitterstream</warName>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
