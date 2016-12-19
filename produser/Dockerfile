@@ -1,5 +1,14 @@
-FROM tomcat:8.5
+FROM java:8-jre
 
-ADD ./target/twitterstream.war $CATALINA_HOME/webapps
+ENV SPARK_FILE produser.jar
 
-CMD ["catalina.sh", "run"]
+# Set the location of the spark
+ENV SPARK_HOME /
+
+# Copy fat jar to the container
+COPY ./target/$SPARK_FILE $SPARK_HOME
+
+# Launch the spark
+WORKDIR $SPARK_HOME
+ENTRYPOINT ["sh", "-c"]
+CMD ["java -jar $SPARK_FILE"]
