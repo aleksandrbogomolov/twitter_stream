@@ -16,6 +16,7 @@ class Main extends AbstractVerticle {
     val statuses: DStream[Status] = stream.startStream()
     val tweet = statuses.map(s => s.getText)
     vertx.eventBus().publish("tweet_feed", tweet.toString)
+    println(tweet.toString)
     tweet.print()
     stream.configuration.streamingContext.start()
     stream.configuration.streamingContext.awaitTermination()

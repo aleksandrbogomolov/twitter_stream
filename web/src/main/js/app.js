@@ -4,7 +4,7 @@ var SockJSHandler = require("vertx-web-js/sock_js_handler");
 var StaticHandler = require("vertx-web-js/static_handler");
 
 var router = Router.router(vertx);
-router.route("/feed/*").handler(
+router.route("/eventbus/*").handler(
     SockJSHandler.create(vertx).bridge({
         "outboundPermitteds": [
             {"address": "tweet_feed"}
