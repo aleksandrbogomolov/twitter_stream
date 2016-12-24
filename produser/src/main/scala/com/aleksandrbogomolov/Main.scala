@@ -1,12 +1,25 @@
 package com.aleksandrbogomolov
 
-import com.aleksandrbogomolov.configuration.SparkConfiguration
-import com.aleksandrbogomolov.stream.FilterStream
+import com.aleksandrbogomolov.stream.{AbstractStream, FilterStream}
+import io.vertx.core.AbstractVerticle
+import org.apache.spark.streaming.dstream.DStream
+import twitter4j.Status
 
-object Main extends App {
+class Main extends AbstractVerticle {
 
-  //    filters = req.getParameter("filters").split(" ")
   val filters: Array[String] = Array("#scala", "#java", "#groovy", "#kotlin")
-  FilterStream.configuration = new SparkConfiguration
-  FilterStream.startStream(filters)
+
+  var stream: AbstractStream = _
+
+  override def start(): Unit = {
+    stream = new FilterStream(filters)
+    val statuses: DStream[Status] = stream.startStream()
+    val tweet = statuses.map(s => s.getText)
+    vertx.eventBus().publish("tweet_feed", tweet.toString)
+    tweet.print()
+    stream.configuration.streamingContext.start()
+    stream.configuration.streamingContext.awaitTermination()
+  }
+
+  override def stop(): Unit = stream.stopStream()
 }
