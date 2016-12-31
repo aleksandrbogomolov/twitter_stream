@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>Stream</title>
+    <meta charset="UTF-8"/>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/sockjs-0.3.4.min.js"></script>
+    <script src="js/vertxbus.js"></script>
+</head>
+<body>
+<H2>Tweet feed:</H2>
+<script>
+    var eb = new vertx.EventBus("/eventbus");
+    eb.onopen = function () {
+        console.log("opening the socket");
+        eb.registerHandler("tweet_feed", function (msg) {
+            console.log("receiving the message " + msg);
+            var message = JSON.parse(msg);
+            $('#messages').prepend(
+                "<p>" + message.text + "</p>");
+        });
+    };
+    eb.onclose = function () {
+        console.log("closing socket");
+        eb = null;
+    };
+</script>
+<div id="messages"></div>
+</body>
+</html>

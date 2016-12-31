@@ -13,9 +13,9 @@ class Main extends AbstractVerticle {
 
   override def start(): Unit = {
     stream = new FilterStream(filters)
-    vertx.deployVerticle(Bus)
+    vertx.deployVerticle(Publisher)
     val statuses: DStream[Status] = stream.startStream()
-    statuses.foreachRDD(_.foreachPartition(_.foreach(Bus.eb)))
+    statuses.foreachRDD(_.foreachPartition(_.foreach(Publisher.publish)))
     stream.configuration.streamingContext.start()
     stream.configuration.streamingContext.awaitTermination()
   }
