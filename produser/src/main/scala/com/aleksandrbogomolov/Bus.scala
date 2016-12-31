@@ -7,11 +7,9 @@ import twitter4j.Status
 object Bus extends AbstractVerticle {
 
   def eb(str: Status): Unit = {
-    //    if (str != null) {
     val msg = new Gson().toJson(str)
     println("------------------------------")
     println(msg)
     vertx.eventBus().publish("tweet_feed", msg)
-    //    }
   }
 }
