@@ -27,16 +27,6 @@
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>3.2.0</version>
-                <configuration>
-                    <recompileMode>incremental</recompileMode>
-                    <args>
-                        <arg>-optimise</arg>
-                        <arg>-unchecked</arg>
-                        <arg>-deprecation</arg>
-                        <arg>-feature</arg>
-                    </args>
-                    <charset>UTF-8</charset>
-                </configuration>
                 <executions>
                     <execution>
                         <id>scala-compile-first</id>
@@ -167,6 +157,8 @@
                                         <argument>run</argument>
                                         <argument>--rm</argument>
                                         <argument>-i</argument>
+                                        <argument>-p</argument>
+                                        <argument>8888:8888</argument>
                                         <argument>${docker.image}</argument>
                                     </arguments>
                                 </configuration>
