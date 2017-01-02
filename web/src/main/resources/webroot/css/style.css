@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#filter-form {
+    margin: 200px auto;
+    width: 500px;
+}
+
+#filter-form input {
+    width: 450px;
+    height: 20px;
+    border: solid black 1px;
+}
