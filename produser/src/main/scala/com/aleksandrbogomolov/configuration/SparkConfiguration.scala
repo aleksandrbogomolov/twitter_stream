@@ -12,7 +12,7 @@ class SparkConfiguration {
 
   val sparkContext = new SparkContext(new SparkConf().setAppName("twitter_stream").setMaster("local[*]"))
 
-  val streamingContext = new StreamingContext(sparkContext, Seconds(20))
+  val streamingContext = new StreamingContext(sparkContext, Seconds(10))
 
   val rootLogger: Logger = Logger.getRootLogger
 

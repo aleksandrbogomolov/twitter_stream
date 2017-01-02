@@ -10,18 +10,19 @@ class Main extends AbstractVerticle {
 
   var stream: AbstractStream = _
 
+
   override def start(): Unit = {
     vertx.createHttpServer.requestHandler(new Handler[HttpServerRequest] {
-      override def handle(event: HttpServerRequest): Unit = {
-        if (event.path().contains("start")) {
+      override def handle(event: HttpServerRequest): Unit = event.path() match {
+        case path if path.contains("start") =>
+          vertx.deployVerticle(Publisher)
           val filters: Array[String] = event.getParam("filter").split(",")
           stream = new FilterStream(filters)
-          vertx.deployVerticle(Publisher)
           val statuses: DStream[Status] = stream.startStream()
           statuses.foreachRDD(_.foreachPartition(_.foreach(Publisher.publish)))
           stream.configuration.streamingContext.start()
           stream.configuration.streamingContext.awaitTermination()
-        }
+        case path if path.contains("stop") => stop()
       }
     }).listen(8888)
   }
