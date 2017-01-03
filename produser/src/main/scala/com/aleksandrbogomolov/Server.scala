@@ -6,23 +6,24 @@ import io.vertx.core.{AbstractVerticle, Handler}
 import org.apache.spark.streaming.dstream.DStream
 import twitter4j.Status
 
-class Main extends AbstractVerticle {
+class Server extends AbstractVerticle {
 
   var stream: AbstractStream = _
 
-
   override def start(): Unit = {
+    vertx.deployVerticle(Publisher)
     vertx.createHttpServer.requestHandler(new Handler[HttpServerRequest] {
       override def handle(event: HttpServerRequest): Unit = event.path() match {
         case path if path.contains("start") =>
-          vertx.deployVerticle(Publisher)
           val filters: Array[String] = event.getParam("filter").split(",")
-          stream = new FilterStream(filters)
-          val statuses: DStream[Status] = stream.startStream()
-          statuses.foreachRDD(_.foreachPartition(_.foreach(Publisher.publish)))
-          stream.configuration.streamingContext.start()
-          stream.configuration.streamingContext.awaitTermination()
-        case path if path.contains("stop") => stop()
+          if (filters != null) {
+            stream = new FilterStream(filters)
+            val statuses: DStream[Status] = stream.startStream()
+            statuses.foreachRDD(_.foreachPartition(_.foreach(Publisher.publish)))
+            stream.configuration.streamingContext.start()
+            stream.configuration.streamingContext.awaitTermination()
+          }
+        case path if path.contains("stop") => stream.stopStream()
       }
     }).listen(8888)
   }
