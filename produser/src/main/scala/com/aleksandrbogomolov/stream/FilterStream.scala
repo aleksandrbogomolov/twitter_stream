@@ -1,14 +1,21 @@
 package com.aleksandrbogomolov.stream
 
-import org.apache.spark.streaming.dstream.DStream
+import com.aleksandrbogomolov.Publisher
+import com.aleksandrbogomolov.configuration.SparkConfiguration
 import org.apache.spark.streaming.twitter.TwitterUtils
-import twitter4j.Status
 
-class FilterStream(val filters: Array[String]) extends AbstractStream {
+class FilterStream(val filters: Array[String]) {
 
-  override def startStream(): DStream[Status] = {
-    TwitterUtils.createStream(configuration.streamingContext, configuration.auth, filters)
+  val configuration: SparkConfiguration =  new SparkConfiguration
+
+  def startStream(): Unit = {
+    val statuses = TwitterUtils.createStream(configuration.streamingContext, configuration.auth, filters)
+    statuses.foreachRDD(_.foreachPartition(_.foreach(Publisher.publish)))
+    configuration.streamingContext.start()
+    configuration.streamingContext.awaitTermination()
   }
 
-  override def stopStream(): Unit = configuration.streamingContext.stop(stopSparkContext = false, stopGracefully = true)
+  def stopStream(): Unit = {
+    configuration.streamingContext.stop(stopSparkContext = true, stopGracefully = true)
+  }
 }

@@ -1,14 +1,12 @@
 package com.aleksandrbogomolov
 
-import com.aleksandrbogomolov.stream.{AbstractStream, FilterStream}
+import com.aleksandrbogomolov.stream.FilterStream
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.{AbstractVerticle, Handler}
-import org.apache.spark.streaming.dstream.DStream
-import twitter4j.Status
 
 class Server extends AbstractVerticle {
 
-  var stream: AbstractStream = _
+  var stream: FilterStream = _
 
   override def start(): Unit = {
     vertx.deployVerticle(Publisher)
@@ -16,14 +14,11 @@ class Server extends AbstractVerticle {
       override def handle(event: HttpServerRequest): Unit = event.path() match {
         case path if path.contains("start") =>
           val filters: Array[String] = event.getParam("filter").split(",")
-          if (filters != null) {
+          if (filters.length > 0) {
             stream = new FilterStream(filters)
-            val statuses: DStream[Status] = stream.startStream()
-            statuses.foreachRDD(_.foreachPartition(_.foreach(Publisher.publish)))
-            stream.configuration.streamingContext.start()
-            stream.configuration.streamingContext.awaitTermination()
+            stream.startStream()
           }
-        case path if path.contains("stop") => stream.stopStream()
+        case path if path.contains("stop") => stream = null
       }
     }).listen(8888)
   }

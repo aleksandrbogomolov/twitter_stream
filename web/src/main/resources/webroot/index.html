@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Tweet stream app</title>
+    <script src="js/jquery.min.js" defer></script>
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/jquery.min.js"></script>
 </head>
 <body>
-<form id="filter-form" action="feed.html">
+<form id="filter-form">
     <label>
-        <input type="text" name="filter"
+        <input type="text" name="filter" id="filter"
                placeholder="Enter key words or hashtags like: #java,#scala,#groovy,#kotlin and press Enter">
     </label>
     <input type="submit" value="Start" hidden>
@@ -18,11 +18,16 @@
 <script>
     $(function () {
         $('#filter-form').submit(function () {
-            $.ajax({
-                url: 'http://localhost:8888/start',
-                type: 'GET',
-                data: $(this).serialize()
-            });
+            if ($('#filter').length > 0) {
+                $.ajax({
+                    url: 'http://localhost:8888/start',
+                    type: 'GET',
+                    data: $(this).serialize(),
+                    success: function () {
+                        window.location.href = 'feed.html'
+                    }
+                });
+            }
         })
     });
 </script>
